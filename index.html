@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image to PDF Converter</title>
+  </head>
+  <body>
+    <h1>Image to PDF Converter</h1>
+    <form id="imageForm" enctype="multipart/form-data">
+      <input type="file" name="images" multiple />
+      <button type="submit">Convert to PDF</button>
+    </form>
+
+    <script>
+      const form = document.getElementById("imageForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const response = await fetch("/api/v1/image-to-pdf", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        console.log(data);
+      });
+    </script>
+  </body>
+</html>

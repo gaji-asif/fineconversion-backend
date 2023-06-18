@@ -9,6 +9,8 @@ services:
       - mongo_data:/data/db
     ports:
       - '27017:27017'
+    env_file:
+      - ./config/config.env
   elasticsearch:
     container_name: elasticsearch
     image: elasticsearch:7.9.2
