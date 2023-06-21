@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const connectDatabase = require("./config/database")
 
 const convertToPdfRoutes = require("./routes/convertToPdf");
+const errorMiddleware = require("./middlewares/errors");
 
 
 //config
@@ -14,5 +15,9 @@ connectDatabase();
 app.use("/api/v1/convert-to-pdf", convertToPdfRoutes);
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server is working at http://localhost:${process.env.PORT}`);
+  console.log(
+    `Server started on PORT : ${process.env.PORT} on ${process.env.NODE_ENV} mode`,
+  );
+  //Middleware to handel error
+  app.use(errorMiddleware);
 });

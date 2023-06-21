@@ -3,9 +3,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const catchAsyncError = require("../middlewares/catchAsyncError");
 
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-
 
 // Function to check the file extension
 const checkExtension = (fileName) => {
@@ -14,7 +12,8 @@ const checkExtension = (fileName) => {
   return allowedExtensions.includes(fileExtension);
 };
 
-exports.imageToPdf =catchAsyncError( async (req, res, next) => {
+
+exports.imageToPdf = catchAsyncError(async (req, res, next) => {
   try {
     const images = req.files;
 
@@ -56,12 +55,27 @@ exports.imageToPdf =catchAsyncError( async (req, res, next) => {
 
     const pdfBytes = await pdfDoc.save();
 
-    res.set({
-      "Content-Type": "application/pdf",
-      "Content-Disposition": 'attachment; filename="converted.pdf"',
-    });
-    res.send(pdfBytes);
+    const publicDirPath = path.join(__dirname, "../public");
+    const filePath = path.join(publicDirPath, "converted.pdf");
+
+    // Create the public directory if it doesn't exist
+    await fs.mkdir(publicDirPath, { recursive: true });
+
+    await fs.writeFile(filePath, pdfBytes);
+
+    // const downloadLink = `${req.protocol}://${req.get("host")}/converted.pdf`;
+
+    // res.set({
+    //   "Content-Type": "application/pdf",
+    //   "Content-Disposition": 'attachment; filename="converted.pdf"',
+    // });
+    // res.send(pdfBytes);
     res.status(200).json({ success: true });
+
+  
+
+    // Trigger the browser to download the PDF document
+    // download(pdfBytes, "pdf-lib_modification_example.pdf", "application/pdf");
   } catch (error) {
     console.error("Conversion error:", error);
     res.status(500).json({ error: "Failed to convert images to PDF" });
